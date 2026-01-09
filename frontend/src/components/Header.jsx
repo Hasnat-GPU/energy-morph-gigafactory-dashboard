@@ -104,6 +104,28 @@ ${report.recommendations.map(r => `• ${r}`).join("\n")}
 
       {/* Right - Actions */}
       <div className="flex items-center gap-2">
+        {/* Export Buttons - More Visible */}
+        <Button
+          data-testid="export-csv-btn"
+          variant="outline"
+          size="sm"
+          onClick={handleExportCSV}
+          className="hidden md:flex items-center gap-1 text-xs border-[#00BFFF]/30 hover:border-[#00BFFF]"
+        >
+          <Download className="w-4 h-4" />
+          CSV
+        </Button>
+        <Button
+          data-testid="export-report-btn"
+          variant="outline"
+          size="sm"
+          onClick={handleGenerateReport}
+          className="hidden md:flex items-center gap-1 text-xs border-[#228B22]/30 hover:border-[#228B22]"
+        >
+          <Download className="w-4 h-4" />
+          Report
+        </Button>
+
         {/* Notifications */}
         <Button
           data-testid="notifications-btn"
@@ -125,22 +147,23 @@ ${report.recommendations.map(r => `• ${r}`).join("\n")}
           <RefreshCw className="w-5 h-5" />
         </Button>
 
-        {/* Export Menu */}
+        {/* Export Menu - Mobile fallback */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               data-testid="export-btn"
               variant="ghost"
               size="icon"
+              className="md:hidden"
             >
               <Download className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={handleExportCSV}>
+            <DropdownMenuItem onClick={handleExportCSV} data-testid="export-csv-menu">
               Export as CSV
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleGenerateReport}>
+            <DropdownMenuItem onClick={handleGenerateReport} data-testid="export-report-menu">
               Generate Report
             </DropdownMenuItem>
           </DropdownMenuContent>
