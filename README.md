@@ -308,13 +308,14 @@ Energy-Morph demonstrates key concepts applicable to **predictive maintenance** 
 
 ## 📄 License
 
-MIT License - feel free to use for personal and commercial projects.
+Copyright (c) 2026 Hasnat Qadir.
+Developed with AI-assisted coding tools (Emergent) to accelerate prototyping—full specifications and iterations directed by Hasnat Qadir.
 
 ---
 
 ## 👨‍💻 Author
 
-Built with ⚡ for Tesla Gigafactory energy management demonstration.
+Hasnat Qadir - Built in January 2026 as a portfolio project demonstrating predictive analytics and dashboard skills for industrial optimization.
 
 ---
 
