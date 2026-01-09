@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
+import { Progress } from "./ui/progress";
+import { Badge } from "./ui/badge";
 import { Activity, Zap, Gauge } from "lucide-react";
 
 const RealtimeMetrics = ({ data, loading }) => {

@@ -7,9 +7,9 @@ import {
   Activity,
   Clock
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { Card, CardContent } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
+import { cn } from "../lib/utils";
 
 const SparklineChart = ({ data, color }) => {
   if (!data || data.length === 0) return null;

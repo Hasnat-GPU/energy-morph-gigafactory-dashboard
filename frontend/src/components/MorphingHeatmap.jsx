@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Plot from "react-plotly.js";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { useTheme } from "@/App";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
+import { Button } from "./ui/button";
+import { useTheme } from "../App";
 import { Maximize2, RefreshCw } from "lucide-react";
 import axios from "axios";
 

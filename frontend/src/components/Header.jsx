@@ -1,5 +1,5 @@
-import { useTheme } from "@/App";
-import { Button } from "@/components/ui/button";
+import { useTheme } from "../App";
+import { Button } from "./ui/button";
 import { 
   Sun, 
   Moon, 
@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from "./ui/dropdown-menu";
 import { toast } from "sonner";
 import axios from "axios";
 
