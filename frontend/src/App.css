@@ -1,34 +1,66 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
+/* App.css - Energy-Morph Dashboard Styles */
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #0f0f10;
+/* Main app wrapper */
+.App {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+    width: 100%;
 }
 
-.App-link {
-    color: #61dafb;
+/* Custom chart styling overrides */
+.js-plotly-plot .plotly .modebar {
+    display: none !important;
 }
 
-@keyframes App-logo-spin {
+/* Animation utilities */
+.animate-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
     from {
-        transform: rotate(0deg);
+        opacity: 0;
+        transform: translateY(10px);
     }
     to {
-        transform: rotate(360deg);
+        opacity: 1;
+        transform: translateY(0);
     }
+}
+
+/* Progress bar custom colors */
+.progress-energy {
+    background: linear-gradient(90deg, #00BFFF 0%, #228B22 100%);
+}
+
+/* Custom selection color */
+::selection {
+    background: rgba(0, 191, 255, 0.3);
+    color: inherit;
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: 2px solid #00BFFF;
+    outline-offset: 2px;
+}
+
+/* Loading skeleton animation */
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-energy {
+    background: linear-gradient(
+        90deg,
+        rgba(192, 192, 192, 0.1) 25%,
+        rgba(192, 192, 192, 0.2) 50%,
+        rgba(192, 192, 192, 0.1) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
 }
