@@ -207,7 +207,8 @@ class EnergyMorphAPITester:
         if self.failed_tests:
             print(f"\n❌ Failed tests ({len(self.failed_tests)}):")
             for failure in self.failed_tests:
-                print(f"   • {failure['test']}: {failure.get('error', f\"Status {failure.get('actual', 'unknown')}\"")}")
+                error_msg = failure.get('error', f"Status {failure.get('actual', 'unknown')}")
+                print(f"   • {failure['test']}: {error_msg}")
         
         return self.tests_passed == self.tests_run
 
