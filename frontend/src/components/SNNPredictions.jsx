@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Plot from "react-plotly.js";
+import { 
+  ResponsiveContainer, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  Tooltip,
+  Legend,
+  Area,
+  AreaChart
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 import { Badge } from "./ui/badge";
@@ -18,9 +28,6 @@ const SNNPredictions = ({ data, loading, fullSize = false }) => {
   const [activeTab, setActiveTab] = useState("predictions");
 
   const isDark = theme === "dark";
-  const bgColor = isDark ? "#0F0F10" : "#FFFFFF";
-  const textColor = isDark ? "#FAFAFA" : "#0F0F10";
-  const gridColor = isDark ? "rgba(192,192,192,0.1)" : "rgba(0,0,0,0.1)";
 
   useEffect(() => {
     const fetchNeuronActivity = async () => {
@@ -50,104 +57,21 @@ const SNNPredictions = ({ data, loading, fullSize = false }) => {
     );
   }
 
-  const hours = [...Array(24)].map((_, i) => `${i}:00`);
-
-  const predictionPlotData = [
-    {
-      type: "scatter",
-      mode: "lines",
-      name: "Demand",
-      x: hours,
-      y: data?.predicted_demand,
-      line: { color: "#E82127", width: 2 },
-      fill: "tozeroy",
-      fillcolor: "rgba(232, 33, 39, 0.1)",
-    },
-    {
-      type: "scatter",
-      mode: "lines",
-      name: "Solar",
-      x: hours,
-      y: data?.predicted_solar,
-      line: { color: "#00BFFF", width: 2 },
-    },
-    {
-      type: "scatter",
-      mode: "lines",
-      name: "Wind",
-      x: hours,
-      y: data?.predicted_wind,
-      line: { color: "#228B22", width: 2 },
-    },
-  ];
-
-  const predictionLayout = {
-    paper_bgcolor: "transparent",
-    plot_bgcolor: bgColor,
-    font: { family: "IBM Plex Sans, sans-serif", color: textColor, size: 10 },
-    margin: { l: 50, r: 20, t: 20, b: 40 },
-    legend: {
-      orientation: "h",
-      y: -0.15,
-      x: 0.5,
-      xanchor: "center",
-      font: { size: 10 },
-    },
-    xaxis: {
-      title: { text: "Hour", font: { size: 10 } },
-      tickfont: { size: 9 },
-      gridcolor: gridColor,
-      showgrid: true,
-      tickangle: -45,
-    },
-    yaxis: {
-      title: { text: "MW", font: { size: 10 } },
-      tickfont: { size: 9 },
-      gridcolor: gridColor,
-    },
-    autosize: true,
-    showlegend: true,
-  };
-
-  // Spike raster plot data
-  const spikeData = data?.spike_patterns?.map((pattern, idx) => ({
-    type: "scatter",
-    mode: "markers",
-    name: pattern.neuron_group,
-    x: pattern.spike_times,
-    y: Array(pattern.spike_times.length).fill(idx),
-    marker: {
-      symbol: "line-ns",
-      size: 12,
-      color: ["#00BFFF", "#228B22", "#E82127", "#C0C0C0", "#00BFFF"][idx],
-    },
-    hovertemplate: `${pattern.neuron_group}<br>Time: %{x:.2f}ms<extra></extra>`,
+  // Prepare chart data
+  const chartData = data?.predicted_demand?.map((demand, idx) => ({
+    hour: `${idx}:00`,
+    demand: demand,
+    solar: data?.predicted_solar?.[idx] || 0,
+    wind: data?.predicted_wind?.[idx] || 0,
   })) || [];
 
-  const spikeLayout = {
-    paper_bgcolor: "transparent",
-    plot_bgcolor: bgColor,
-    font: { family: "IBM Plex Sans, sans-serif", color: textColor, size: 10 },
-    margin: { l: 120, r: 20, t: 20, b: 40 },
-    xaxis: {
-      title: { text: "Time (ms)", font: { size: 10 } },
-      tickfont: { size: 9 },
-      gridcolor: gridColor,
-      range: [0, 100],
-    },
-    yaxis: {
-      ticktext: data?.spike_patterns?.map(p => p.neuron_group) || [],
-      tickvals: [...Array(5)].map((_, i) => i),
-      tickfont: { size: 9 },
-    },
-    showlegend: false,
-    autosize: true,
-  };
-
-  const config = {
-    displayModeBar: false,
-    responsive: true,
-  };
+  // Prepare spike data for visualization
+  const spikeData = data?.spike_patterns?.map((pattern) => ({
+    name: pattern.neuron_group.replace(/_/g, " "),
+    spikes: pattern.spike_times.length,
+    firingRate: (pattern.firing_rate * 100).toFixed(1),
+    potential: pattern.membrane_potential.toFixed(1),
+  })) || [];
 
   return (
     <Card className="bg-card/50 border-border/50 h-full">
@@ -178,25 +102,101 @@ const SNNPredictions = ({ data, loading, fullSize = false }) => {
 
           <TabsContent value="predictions">
             <div className={`${fullSize ? "h-[400px]" : "h-[200px]"}`}>
-              <Plot
-                data={predictionPlotData}
-                layout={predictionLayout}
-                config={config}
-                style={{ width: "100%", height: "100%" }}
-                useResizeHandler
-              />
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="demandGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#E82127" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#E82127" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis 
+                    dataKey="hour" 
+                    tick={{ fontSize: 10, fill: isDark ? '#a1a1aa' : '#71717a' }}
+                    axisLine={{ stroke: isDark ? '#27272a' : '#e4e4e7' }}
+                    tickLine={false}
+                    interval={3}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 10, fill: isDark ? '#a1a1aa' : '#71717a' }}
+                    axisLine={{ stroke: isDark ? '#27272a' : '#e4e4e7' }}
+                    tickLine={false}
+                    width={40}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: isDark ? '#0F0F10' : '#FFFFFF',
+                      border: '1px solid rgba(192,192,192,0.2)',
+                      borderRadius: '4px',
+                      fontSize: '12px'
+                    }}
+                  />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36}
+                    wrapperStyle={{ fontSize: '10px' }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="demand"
+                    stroke="#E82127"
+                    fill="url(#demandGradient)"
+                    strokeWidth={2}
+                    name="Demand"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="solar"
+                    stroke="#00BFFF"
+                    strokeWidth={2}
+                    dot={false}
+                    name="Solar"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="wind"
+                    stroke="#228B22"
+                    strokeWidth={2}
+                    dot={false}
+                    name="Wind"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </TabsContent>
 
           <TabsContent value="spikes">
-            <div className={`${fullSize ? "h-[400px]" : "h-[200px]"}`}>
-              <Plot
-                data={spikeData}
-                layout={spikeLayout}
-                config={config}
-                style={{ width: "100%", height: "100%" }}
-                useResizeHandler
-              />
+            <div className={`${fullSize ? "h-[400px]" : "h-[200px]"} space-y-2 overflow-auto`}>
+              {spikeData.map((neuron, idx) => (
+                <motion.div
+                  key={neuron.name}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="p-3 rounded-sm bg-muted/30 border border-border/50"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium capitalize">{neuron.name}</span>
+                    <Badge variant="outline" className="text-xs font-mono">
+                      {neuron.spikes} spikes
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <span>Firing Rate: <span className="text-[#00BFFF] font-mono">{neuron.firingRate}%</span></span>
+                    <span>Membrane: <span className="text-[#228B22] font-mono">{neuron.potential}mV</span></span>
+                  </div>
+                  {/* Spike visualization */}
+                  <div className="mt-2 h-4 bg-muted/50 rounded-sm relative overflow-hidden">
+                    {[...Array(neuron.spikes)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute top-0 bottom-0 w-0.5 bg-[#00BFFF]"
+                        style={{ left: `${(i / neuron.spikes) * 100}%` }}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </TabsContent>
         </Tabs>

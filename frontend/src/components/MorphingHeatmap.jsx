@@ -1,28 +1,43 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import Plot from "react-plotly.js";
+import { 
+  ResponsiveContainer, 
+  Tooltip as RechartsTooltip,
+  Cell
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
 import { useTheme } from "../App";
-import { Maximize2, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import axios from "axios";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Custom Heatmap using CSS Grid
+const HeatmapCell = ({ value, maxValue, type }) => {
+  const intensity = Math.min(value / maxValue, 1);
+  const color = type === "power" 
+    ? `rgba(0, 191, 255, ${0.2 + intensity * 0.8})`
+    : `rgba(34, 139, 34, ${0.2 + intensity * 0.8})`;
+  
+  return (
+    <div 
+      className="w-full h-8 rounded-sm transition-all duration-300 flex items-center justify-center text-xs font-mono"
+      style={{ backgroundColor: color }}
+    >
+      {value.toFixed(1)}
+    </div>
+  );
+};
+
 const MorphingHeatmap = ({ data, loading, fullSize = false }) => {
   const { theme } = useTheme();
-  const [viewMode, setViewMode] = useState("power"); // power or efficiency
+  const [viewMode, setViewMode] = useState("power");
   const [morphData, setMorphData] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const isDark = theme === "dark";
-  const bgColor = isDark ? "#0F0F10" : "#FFFFFF";
-  const textColor = isDark ? "#FAFAFA" : "#0F0F10";
-  const gridColor = isDark ? "rgba(192,192,192,0.1)" : "rgba(0,0,0,0.1)";
-
-  // Fetch realtime heatmap data for morphing effect
   const fetchMorphData = useCallback(async () => {
     try {
       setIsAnimating(true);
@@ -36,6 +51,7 @@ const MorphingHeatmap = ({ data, loading, fullSize = false }) => {
   }, []);
 
   useEffect(() => {
+    fetchMorphData();
     const interval = setInterval(fetchMorphData, 5000);
     return () => clearInterval(interval);
   }, [fetchMorphData]);
@@ -54,54 +70,7 @@ const MorphingHeatmap = ({ data, loading, fullSize = false }) => {
   }
 
   const values = viewMode === "power" ? data?.power_values : data?.efficiency_values;
-  const colorscale = viewMode === "power" 
-    ? [[0, "#0a2f4a"], [0.5, "#00BFFF"], [1, "#228B22"]]
-    : [[0, "#1a1a2e"], [0.5, "#228B22"], [1, "#00BFFF"]];
-
-  const plotData = [{
-    type: "heatmap",
-    z: values,
-    x: data?.timestamps?.slice(-24).map((t, i) => `${i}h`),
-    y: data?.zones,
-    colorscale: colorscale,
-    showscale: true,
-    colorbar: {
-      title: {
-        text: viewMode === "power" ? "MW" : "Efficiency",
-        side: "right",
-        font: { color: textColor, size: 11 }
-      },
-      tickfont: { color: textColor, size: 10 },
-      thickness: 15,
-      len: 0.8,
-    },
-    hoverongaps: false,
-    hovertemplate: "<b>%{y}</b><br>Hour: %{x}<br>Value: %{z:.2f}<extra></extra>",
-  }];
-
-  const layout = {
-    paper_bgcolor: "transparent",
-    plot_bgcolor: bgColor,
-    font: { family: "IBM Plex Sans, sans-serif", color: textColor },
-    margin: { l: 70, r: 30, t: 30, b: 50 },
-    xaxis: {
-      title: { text: "Time (hours ago)", font: { size: 11 } },
-      tickfont: { size: 10 },
-      gridcolor: gridColor,
-      showgrid: false,
-    },
-    yaxis: {
-      title: { text: "Power Zone", font: { size: 11 } },
-      tickfont: { size: 10 },
-      gridcolor: gridColor,
-    },
-    autosize: true,
-  };
-
-  const config = {
-    displayModeBar: false,
-    responsive: true,
-  };
+  const maxValue = values ? Math.max(...values.flat()) : 100;
 
   return (
     <Card className="bg-card/50 border-border/50 h-full">
@@ -142,17 +111,55 @@ const MorphingHeatmap = ({ data, loading, fullSize = false }) => {
       </CardHeader>
       <CardContent>
         <motion.div 
-          className={`${fullSize ? "h-[500px]" : "h-[300px]"}`}
+          className={`${fullSize ? "h-[500px]" : "h-[280px]"} overflow-auto`}
           animate={{ opacity: isAnimating ? 0.7 : 1 }}
           transition={{ duration: 0.3 }}
         >
-          <Plot
-            data={plotData}
-            layout={layout}
-            config={config}
-            style={{ width: "100%", height: "100%" }}
-            useResizeHandler
-          />
+          {/* Heatmap Grid */}
+          <div className="space-y-1">
+            {/* Header row with time labels */}
+            <div className="flex gap-1 mb-2">
+              <div className="w-16 shrink-0" />
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="flex-1 text-center text-xs text-muted-foreground">
+                  {i * 2}h
+                </div>
+              ))}
+            </div>
+            
+            {/* Zone rows */}
+            {data?.zones?.map((zone, zoneIdx) => (
+              <motion.div 
+                key={zone}
+                className="flex gap-1 items-center"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: zoneIdx * 0.05 }}
+              >
+                <div className="w-16 shrink-0 text-xs font-medium">{zone}</div>
+                <div className="flex-1 grid grid-cols-12 gap-1">
+                  {values?.[zoneIdx]?.slice(0, 12).map((val, idx) => (
+                    <HeatmapCell 
+                      key={idx}
+                      value={val}
+                      maxValue={maxValue}
+                      type={viewMode}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          {/* Legend */}
+          <div className="mt-4 flex items-center justify-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-20 h-3 rounded-sm bg-gradient-to-r from-[rgba(0,191,255,0.2)] to-[rgba(0,191,255,1)]" />
+              <span className="text-xs text-muted-foreground">
+                {viewMode === "power" ? "Low → High MW" : "Low → High %"}
+              </span>
+            </div>
+          </div>
         </motion.div>
 
         {/* Realtime Zone Status */}
