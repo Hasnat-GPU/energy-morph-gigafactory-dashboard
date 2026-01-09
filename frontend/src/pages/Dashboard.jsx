@@ -14,6 +14,7 @@ import BlockchainTracker from "../components/BlockchainTracker";
 import QueryInterface from "../components/QueryInterface";
 import ScenarioPanel from "../components/ScenarioPanel";
 import RealtimeMetrics from "../components/RealtimeMetrics";
+import OnboardingTour from "../components/OnboardingTour";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -23,6 +24,7 @@ const Dashboard = () => {
   const [activePanel, setActivePanel] = useState("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showTour, setShowTour] = useState(false);
   
   // Data states
   const [kpiData, setKpiData] = useState(null);
@@ -30,6 +32,14 @@ const Dashboard = () => {
   const [realtimeData, setRealtimeData] = useState(null);
   const [snnPredictions, setSnnPredictions] = useState(null);
   const [blockchainData, setBlockchainData] = useState(null);
+
+  // Check if first visit and show tour
+  useEffect(() => {
+    const tourCompleted = localStorage.getItem("energy-morph-tour-completed");
+    if (!tourCompleted) {
+      setTimeout(() => setShowTour(true), 1500);
+    }
+  }, []);
 
   // Fetch data
   const fetchData = useCallback(async () => {
@@ -147,6 +157,12 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      {/* Onboarding Tour */}
+      <OnboardingTour 
+        isOpen={showTour} 
+        onClose={() => setShowTour(false)} 
+      />
+
       {/* Sidebar */}
       <Sidebar 
         collapsed={sidebarCollapsed}
@@ -159,7 +175,7 @@ const Dashboard = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
           onRefresh={fetchData}
-          onStartTour={() => toast.info("Welcome to Energy-Morph Dashboard!")}
+          onStartTour={() => setShowTour(true)}
         />
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
