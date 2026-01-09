@@ -1,0 +1,160 @@
+{
+  "identity": {
+    "name": "Energy-Morph",
+    "persona": "E1 - The Anti-AI Designer",
+    "tone": "High-Tech, Precision, Living, Premium, Urgent",
+    "archetype": "Electric & Neon (Future, Speed, Disruption) mixed with Swiss & High-Contrast (Authority)",
+    "design_principles": [
+      "Fusion over Imitation: Mix Tesla precision with organic morphing energy flows.",
+      "Emotion First: Every data point must feel 'alive'.",
+      "Content is King: Data is the hero; UI is the HUD.",
+      "Zoom In: Focus on critical metrics (sparklines, KPIs).",
+      "Negative Space: Use dense grids but leave breathing room within cards.",
+      "Contrast: High contrast for readability in 'Control Room' environments."
+    ]
+  },
+  "typography": {
+    "headings": {
+      "family": "Manrope",
+      "weights": ["Light (300)", "Bold (700)"],
+      "usage": "Main page titles, KPI values, Section headers",
+      "letter_spacing": "tracking-tight"
+    },
+    "body": {
+      "family": "IBM Plex Sans",
+      "weights": ["Regular (400)", "Medium (500)"],
+      "usage": "General text, labels, descriptions",
+      "letter_spacing": "tracking-normal"
+    },
+    "mono": {
+      "family": "JetBrains Mono",
+      "weights": ["Regular (400)"],
+      "usage": "Code snippets, Hash IDs, Raw Data values",
+      "letter_spacing": "tracking-wide"
+    }
+  },
+  "colors": {
+    "primary": {
+      "name": "Electric Blue",
+      "hex": "#00BFFF",
+      "usage": "Energy Flows, Active States, Primary Actions"
+    },
+    "secondary": {
+      "name": "Forest Green",
+      "hex": "#228B22",
+      "usage": "Efficiency Gains, Renewable Inputs, Success States"
+    },
+    "accent": {
+      "name": "Tesla Red",
+      "hex": "#E82127",
+      "usage": "Alerts, High Demand Zones, Critical Errors"
+    },
+    "neutral": {
+      "name": "Metallic Silver",
+      "hex": "#C0C0C0",
+      "usage": "Borders, Dividers, Inactive Icons"
+    },
+    "background": {
+      "dark": "#050505",
+      "light": "#F5F5F7",
+      "usage": "App Background"
+    },
+    "surface": {
+      "dark": "#0F0F10",
+      "light": "#FFFFFF",
+      "usage": "Cards, Panels, Sidebars"
+    }
+  },
+  "visual_enhancers": {
+    "gradients": {
+      "morph": "linear-gradient(135deg, #00BFFF 0%, #228B22 100%)",
+      "glass": "linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)"
+    },
+    "borders": {
+      "style": "1px solid",
+      "color": "rgba(192, 192, 192, 0.2)",
+      "active": "1px solid #00BFFF",
+      "radius": "rounded-sm"
+    },
+    "shadows": {
+      "neon": "0 0 10px rgba(0, 191, 255, 0.3)",
+      "card": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)"
+    },
+    "textures": {
+      "grid": "radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px) background-size: 20px 20px"
+    }
+  },
+  "layout": {
+    "grid_system": "Mode B: The Control Room Grid",
+    "columns": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4",
+    "gap": "gap-4 or gap-6",
+    "container_padding": "p-4 md:p-6 lg:p-8",
+    "rules": [
+      "Every pixel must be utilized.",
+      "Use h-full on children to ensure they stretch.",
+      "No jagged bottoms.",
+      "Dashboard widgets must align to the grid."
+    ]
+  },
+  "components": {
+    "cards": {
+      "style": "Flat background (Surface color), 1px subtle border (Neutral/20), No shadow by default.",
+      "hover": "Slight lift (-translate-y-1), Neon Shadow, Border color becomes Primary."
+    },
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm font-medium tracking-wide uppercase text-xs",
+      "secondary": "border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-sm font-medium tracking-wide uppercase text-xs",
+      "ghost": "hover:bg-accent hover:text-accent-foreground rounded-sm"
+    },
+    "inputs": {
+      "style": "bg-background border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 rounded-sm"
+    },
+    "charts": {
+      "library": "Plotly.js (via react-plotly.js)",
+      "style": "Transparent background, Neon lines, Minimal grid lines, Tooltips with glassmorphism."
+    }
+  },
+  "motion": {
+    "transitions": "transition-all duration-300 ease-in-out",
+    "morphing": "Use framer-motion layoutId for smooth transitions between grid states.",
+    "hover": "Scale 1.02 on interactive cards.",
+    "loading": "Skeleton loaders with shimmering gradient."
+  },
+  "image_urls": {
+    "solar_farm": {
+      "url": "https://images.unsplash.com/photo-1619253860919-b7255e1bab47?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwyfHxmdXR1cmlzdGljJTIwc29sYXIlMjBmYXJtJTIwc3Vuc2V0fGVufDB8fHx8MTc2Nzk1MDc2NHww&ixlib=rb-4.1.0&q=85",
+      "description": "Green field with solar panels, suitable for 'Renewable Inputs' section background or card image."
+    },
+    "wind_turbine": {
+      "url": "https://images.unsplash.com/photo-1761131222461-115e8aba595e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3aW5kJTIwdHVyYmluZSUyMGVuZXJneSUyMGdyaWR8ZW58MHx8fHwxNzY3OTUwNzY2fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Clean white wind turbine against blue sky, for 'Wind Energy' metrics."
+    },
+    "server_room": {
+      "url": "https://images.unsplash.com/photo-1645477704075-cb3d14b349ee?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzl8MHwxfHNlYXJjaHwxfHxoaWdoJTIwdGVjaCUyMHNlcnZlciUyMHJvb20lMjBibHVlJTIwbGlnaHRzfGVufDB8fHx8MTc2Nzk1MDc2N3ww&ixlib=rb-4.1.0&q=85",
+      "description": "High tech server room with blue lights, for 'AI/SNN Predictions' or 'Data Center' context."
+    }
+  },
+  "instructions_to_main_agent": [
+    "Implement the 'Control Room' grid layout strictly.",
+    "Use the specified color palette for all charts and UI elements.",
+    "Ensure the Dark/Light mode toggle works and defaults to Dark Mode.",
+    "Use Plotly.js for all charts as requested.",
+    "Integrate the provided images where contextually appropriate (e.g., as backgrounds for specific KPI cards or in the 'Grid Analytics' page).",
+    "Apply 'Manrope' font for headings and 'IBM Plex Sans' for body text.",
+    "Use 'JetBrains Mono' for all numerical data and code-like elements.",
+    "Create a 'Morphing Heatmap' component using a gradient mesh or Plotly heatmap with smooth transitions.",
+    "Ensure all interactive elements have data-testid attributes."
+  ],
+  "universal_guidelines": [
+    "Avoid generic 'AI slop' aesthetics.",
+    "Do not use gradients for dark colors.",
+    "Create depth through z-index and glassmorphism.",
+    "No universal 'transition: all'.",
+    "No center-aligned app containers.",
+    "Use modern button styles (sharp/pill).",
+    "No AI emoji icons.",
+    "Micro-animations for every interaction.",
+    "Generous spacing (2-3x normal).",
+    "Use 'sonner' for toasts."
+  ]
+}
