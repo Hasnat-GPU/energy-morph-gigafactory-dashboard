@@ -302,3 +302,19 @@
         display: contents !important;
     }
 }
+
+/* Tour highlight animation */
+.tour-highlight {
+    position: relative;
+    z-index: 40;
+    animation: tour-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tour-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(0, 191, 255, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(0, 191, 255, 0);
+    }
+}
