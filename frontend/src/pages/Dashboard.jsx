@@ -1,20 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "@/App";
+import { useTheme } from "../App";
 import axios from "axios";
 import { toast } from "sonner";
-import Joyride, { STATUS } from "react-joyride";
 
 // Components
-import Sidebar from "@/components/Sidebar";
-import Header from "@/components/Header";
-import KPICards from "@/components/KPICards";
-import MorphingHeatmap from "@/components/MorphingHeatmap";
-import SNNPredictions from "@/components/SNNPredictions";
-import BlockchainTracker from "@/components/BlockchainTracker";
-import QueryInterface from "@/components/QueryInterface";
-import ScenarioPanel from "@/components/ScenarioPanel";
-import RealtimeMetrics from "@/components/RealtimeMetrics";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import KPICards from "../components/KPICards";
+import MorphingHeatmap from "../components/MorphingHeatmap";
+import SNNPredictions from "../components/SNNPredictions";
+import BlockchainTracker from "../components/BlockchainTracker";
+import QueryInterface from "../components/QueryInterface";
+import ScenarioPanel from "../components/ScenarioPanel";
+import RealtimeMetrics from "../components/RealtimeMetrics";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -24,7 +23,6 @@ const Dashboard = () => {
   const [activePanel, setActivePanel] = useState("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [runTour, setRunTour] = useState(false);
   
   // Data states
   const [kpiData, setKpiData] = useState(null);
@@ -32,39 +30,6 @@ const Dashboard = () => {
   const [realtimeData, setRealtimeData] = useState(null);
   const [snnPredictions, setSnnPredictions] = useState(null);
   const [blockchainData, setBlockchainData] = useState(null);
-
-  // Tour steps
-  const tourSteps = [
-    {
-      target: '[data-testid="kpi-cards"]',
-      content: "View real-time KPIs including grid uptime, efficiency gains, and renewable output.",
-      disableBeacon: true,
-    },
-    {
-      target: '[data-testid="morphing-heatmap"]',
-      content: "The morphing heatmap shows power distribution across zones in real-time.",
-    },
-    {
-      target: '[data-testid="snn-predictions"]',
-      content: "SNN-powered predictions forecast grid demand and renewable output.",
-    },
-    {
-      target: '[data-testid="blockchain-tracker"]',
-      content: "Track renewable energy transactions on the simulated blockchain.",
-    },
-    {
-      target: '[data-testid="theme-toggle"]',
-      content: "Toggle between dark and light mode for your preference.",
-    },
-  ];
-
-  const handleTourCallback = (data) => {
-    const { status } = data;
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      setRunTour(false);
-      localStorage.setItem("energy-morph-tour-completed", "true");
-    }
-  };
 
   // Fetch data
   const fetchData = useCallback(async () => {
@@ -93,13 +58,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchData();
-    
-    // Check if tour should run
-    const tourCompleted = localStorage.getItem("energy-morph-tour-completed");
-    if (!tourCompleted) {
-      setTimeout(() => setRunTour(true), 2000);
-    }
-
     // Auto-refresh every 30 seconds
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
@@ -189,23 +147,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <Joyride
-        steps={tourSteps}
-        run={runTour}
-        continuous
-        showProgress
-        showSkipButton
-        callback={handleTourCallback}
-        styles={{
-          options: {
-            primaryColor: "#00BFFF",
-            backgroundColor: theme === "dark" ? "#0F0F10" : "#FFFFFF",
-            textColor: theme === "dark" ? "#FAFAFA" : "#0F0F10",
-            arrowColor: theme === "dark" ? "#0F0F10" : "#FFFFFF",
-          },
-        }}
-      />
-
       {/* Sidebar */}
       <Sidebar 
         collapsed={sidebarCollapsed}
@@ -218,7 +159,7 @@ const Dashboard = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
           onRefresh={fetchData}
-          onStartTour={() => setRunTour(true)}
+          onStartTour={() => toast.info("Welcome to Energy-Morph Dashboard!")}
         />
 
         <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
